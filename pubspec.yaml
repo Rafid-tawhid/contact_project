@@ -44,6 +44,8 @@ dependencies:
   intl:
   image_picker:
   flutter_easyloading: ^3.0.5
+  url_launcher:
+  flutter_email_sender: ^5.1.0
 
 dev_dependencies:
   flutter_test:

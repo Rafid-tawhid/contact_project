@@ -1,6 +1,7 @@
 const String tableContactColId='id';
 const String tableContactColName='name';
 const String tableContactColNumber='number';
+const String tableContactColDesignation='designation';
 const String tableContactColEmail='email';
 const String tableContactColAddress='address';
 const String tableContactColDob='doJoin';
@@ -13,6 +14,7 @@ class ContactModel{
   String? id;
   String? name;
   String? number;
+  String? designation;
   String? email;
   String? address;
   String? zone;
@@ -24,6 +26,7 @@ class ContactModel{
       {this.id,
       this.name,
       this.number,
+      this.designation,
       this.email,
       this.address,
       this.zone,
@@ -37,6 +40,7 @@ class ContactModel{
       tableContactColId:id,
       tableContactColName:name,
       tableContactColNumber:number,
+      tableContactColDesignation:designation,
       tableContactColEmail:email,
       tableContactColAddress:address,
       tableContactColZone:zone,
@@ -54,6 +58,7 @@ class ContactModel{
     id : map[tableContactColId],
     name: map[tableContactColName],
     number: map[tableContactColNumber],
+    designation: map[tableContactColDesignation],
     email: map[tableContactColEmail],
     address: map[tableContactColAddress],
     doJoin: map[tableContactColDob],
@@ -65,6 +70,6 @@ class ContactModel{
 
   @override
   String toString() {
-    return 'ContactModel{id: $id, name: $name, number: $number, email: $email, address: $address, zone: $zone, circle: $circle, doJoin: $doJoin, image: $image}';
+    return 'ContactModel{id: $id, name: $name, number: $number, designation: $designation, email: $email, address: $address, zone: $zone, circle: $circle, doJoin: $doJoin, image: $image}';
   }
 }
