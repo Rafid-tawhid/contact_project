@@ -5,6 +5,8 @@ import 'package:contact_project/models/contact_model.dart';
 class DbHelper {
 
   static const String collectionContact = 'Contacts';
+  static const String collectionCircles = 'Circles';
+  static const String collectionZones= 'Zones';
 
 
   static FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -21,4 +23,14 @@ class DbHelper {
       _db.collection(collectionContact).snapshots();
 
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllZones() =>
+      _db.collection(collectionZones).snapshots();
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllCircles() =>
+      _db.collection(collectionCircles).snapshots();
+
+  static Future<void> updateProfile(String uid, Map<String, dynamic> map) {
+
+    return _db.collection(collectionContact).doc(uid).update(map);
+  }
 }

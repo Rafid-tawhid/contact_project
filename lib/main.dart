@@ -2,6 +2,7 @@
 import 'package:contact_project/pages/contact_details_page.dart';
 import 'package:contact_project/pages/contactlist_page.dart';
 import 'package:contact_project/pages/new_contact_page.dart';
+import 'package:contact_project/pages/update_page.dart';
 import 'package:contact_project/providers/contact_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         ContactListPage.routeName:(context)=>ContactListPage(),
         NewContactPage.routeName:(context)=>NewContactPage(),
         ContactDetailsPage.routeName:(context)=>ContactDetailsPage(),
+       UpdateContact.routeName:(context)=>UpdateContact(),
      },
 
     );

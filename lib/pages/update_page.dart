@@ -1,23 +1,26 @@
-import 'dart:io';
-
-import 'package:contact_project/providers/contact_provider.dart';
-import 'package:contact_project/utils/helper_functions.dart';
+import 'package:contact_project/db/db_helper.dart';
+import 'package:contact_project/pages/contactlist_page.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../models/contact_model.dart';
+import '../providers/contact_provider.dart';
+import '../utils/helper_functions.dart';
 
-class NewContactPage extends StatefulWidget {
-  static const String routeName='/new_contact';
+class UpdateContact extends StatefulWidget {
+  static const String routeName= '/update';
+  const UpdateContact({Key? key}) : super(key: key);
+
 
   @override
-  State<NewContactPage> createState() => _NewContactPageState();
+  State<UpdateContact> createState() => _UpdateContactState();
 }
 
-class _NewContactPageState extends State<NewContactPage> {
-
+class _UpdateContactState extends State<UpdateContact> {
+  late ContactModel contact;
   final nameControler=TextEditingController();
   final numberControler=TextEditingController();
   final designationControler=TextEditingController();
@@ -30,38 +33,48 @@ class _NewContactPageState extends State<NewContactPage> {
   String? _zone;
   String? _circle;
   late ContactProvider provider;
-
-
-  @override
-  void didChangeDependencies() {
-    provider=Provider.of<ContactProvider>(context,listen: true);
-
-    super.didChangeDependencies();
-  }
+  bool setValuetoFields=true;
 
   final from_key=GlobalKey<FormState>();
   @override
   void dispose() {
     nameControler.dispose();
     numberControler.dispose();
-    designationControler.dispose();
     emailControler.dispose();
     addressControler.dispose();
     super.dispose();
   }
 
+
+  @override
+  void didChangeDependencies() {
+    provider=Provider.of<ContactProvider>(context,listen: true);
+    contact=ModalRoute.of(context)!.settings.arguments! as ContactModel;
+    if(contact!=null){
+      if(setValuetoFields){
+        setContactInfo();
+        setValuetoFields=false;
+      }
+
+    }
+    super.didChangeDependencies();
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Contact List'),
+      appBar: AppBar(title: Text('Update Contact List'),
 
         actions: [
-         _isUploading?Padding(
-           padding: const EdgeInsets.all(3.0),
-           child: CircularProgressIndicator(
-             color: Colors.white,
-           ),
-         ): IconButton(onPressed: _saveContact, icon: Icon(Icons.save))
+          _isUploading?Padding(
+            padding: const EdgeInsets.all(3.0),
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          ): IconButton(onPressed: _saveContact, icon: Icon(Icons.save))
         ],
       ),
       body: Form(
@@ -130,6 +143,7 @@ class _NewContactPageState extends State<NewContactPage> {
             SizedBox(height: 10,),
             TextFormField(
               controller: emailControler,
+
               decoration: InputDecoration(
                 labelText: 'Email',
                 prefixIcon: Icon(Icons.email),
@@ -153,58 +167,61 @@ class _NewContactPageState extends State<NewContactPage> {
 
             ),
             SizedBox(height: 10,),
-
-        Row(
-          children: [
-            Expanded(child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Change Zone or Circle',style: TextStyle(color: Colors.red,fontSize: 16),),
+            ),
+            Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child:DropdownButtonFormField(
-                    hint: Text('Select Circle'),
-                    value: _circle,
-                    onChanged: (value){
-                      _circle=value;
-                    },
-                    items: circleList.map((circle) =>
-                        DropdownMenuItem(
-                            child: Text(circle),
-                          value: circle,
+                Expanded(child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child:DropdownButtonFormField(
+                          hint: Text('Select Circle'),
+                          value: _circle,
+                          onChanged: (value){
+                            _circle=value;
+                          },
+                          items: circleList.map((circle) =>
+                              DropdownMenuItem(
+                                child: Text(circle),
+                                value: circle,
+                              )
+                          ).toList(),
                         )
-                    ).toList(),
-                  )
+                    ),
+                  ],
+                ),),
+                SizedBox(width: 15,),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child:DropdownButtonFormField(
+                            hint: Text('Select Zones'),
+                            value: _zone,
+                            onChanged: (value){
+                              _zone=value;
+                            },
+                            items: zoneList.map((zones) =>
+                                DropdownMenuItem(
+                                  child: Text(zones),
+                                  value: zones,
+                                )
+                            ).toList(),
+                          )
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),),
-            SizedBox(width: 15,),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child:DropdownButtonFormField(
-                        hint: Text('Select Zones'),
-                        value: _zone,
-                        onChanged: (value){
-                          _zone=value;
-                        },
-                        items: zoneList.map((zones) =>
-                            DropdownMenuItem(
-                              child: Text(zones),
-                              value: zones,
-                            )
-                        ).toList(),
-                      )
-                  ),
-                ],
-              ),
             ),
-          ],
-        ),
 
             Card(
               child: Row(
@@ -221,7 +238,7 @@ class _NewContactPageState extends State<NewContactPage> {
 
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Chose an Image'),
+              child: Text('Change Image',style: TextStyle(color: Colors.red,fontSize: 16),),
             ),
             Center(
               child: Card(
@@ -232,9 +249,10 @@ class _NewContactPageState extends State<NewContactPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(5),
                   child: _imageUrl == null
-                      ? const Icon(
-                    Icons.photo,
-                    size: 110,
+                      ?  Image.network(
+                    contact.image!,
+                    height: 110,
+                    width: 110,
                   )
                       : Image.network(
                     _imageUrl!,
@@ -274,7 +292,7 @@ class _NewContactPageState extends State<NewContactPage> {
   }
   void _saveContact() async {
     if(_dob == null) {
-      showMsg(context, 'Please select a purchase date');
+      showMsg(context, 'Please select a date');
       return;
     }
     if(_imageUrl == null) {
@@ -282,7 +300,8 @@ class _NewContactPageState extends State<NewContactPage> {
       return;
     }
     if(from_key.currentState!.validate()){
-      final contact = ContactModel(
+      final contactModel = ContactModel(
+          id: contact.id!,
           name: nameControler.text,
           number: numberControler.text,
           designation: designationControler.text,
@@ -293,13 +312,14 @@ class _NewContactPageState extends State<NewContactPage> {
           circle: _circle,
           image: _imageUrl
       );
-       print(contact.toString());
-      context
-          .read<ContactProvider>()
-          .addCategory(contact)
+
+      // context
+      //     .read<ContactProvider>()
+      //     .updateProfile(contact.id!,contact.toMap())
+    DbHelper.updateProfile(contact.id!, contactModel.toMap())
           .then((value) {
         nameControler.clear();
-        Navigator.pop(context);
+        Navigator.pushReplacementNamed(context, ContactListPage.routeName);
       });
       // final status = await Provider
       //     .of<ContactProvider>(context, listen: false)
@@ -338,5 +358,18 @@ class _NewContactPageState extends State<NewContactPage> {
         });
       } catch (e) {}
     }
+  }
+
+  void setContactInfo() {
+    setState(() {
+      nameControler.text=contact!.name!;
+      emailControler.text=contact!.email!;
+      designationControler.text=contact!.designation!;
+      numberControler.text=contact!.number!;
+      addressControler.text=contact!.address!;
+      _zone=contact.zone;
+      _circle=contact.circle;
+      _dob=contact.doJoin;
+    });
   }
 }
