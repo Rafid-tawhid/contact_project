@@ -62,7 +62,13 @@ class ContactProvider extends ChangeNotifier {
     return DbHelper.updateProfile(uid, map);
   }
 
+  getFilteredContact(String zone) {
+    DbHelper.getAllContactByFilteringZone(zone).listen((event) {
+      filteredContactList = List.generate(event.docs.length, (index) =>
+          ContactModel.fromMap(event.docs[index].data()));
+      notifyListeners();
+    });
 
-  Stream<QuerySnapshot<Map<String, dynamic>>> getFilteredContact(String zone) =>
-      DbHelper.getAllContactByFilteringZone(zone);
+    print('SIZE OF FILTER ${filteredContactList.length}');
+  }
 }

@@ -32,8 +32,7 @@ class _ContactListPageState extends State<ContactListPage> {
    getAllCircles();
    Provider.of<ContactProvider>(context,listen: false).getAllZones();
   
-   Provider.of<ContactProvider>(context,listen: false).
-   getFilteredContact('Zone 9');
+
 
     super.didChangeDependencies();
   }
@@ -46,6 +45,7 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(title: Text('Contact List'),
         actions: [
           IconButton(onPressed: (){
+           // Navigator.pushNamed(context, FilteringPage.routeName);
             showSearch(context: context, delegate: SearchContact()).then((name){
               contactList.forEach((element) {
                 if(element.name==name){
@@ -56,9 +56,9 @@ class _ContactListPageState extends State<ContactListPage> {
               Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contactFinal);
             });
           }, icon: Icon(Icons.search)),
-          IconButton(onPressed: (){
-            Navigator.pushNamed(context, FilteringPage.routeName);
-          }, icon: Icon(Icons.filter_center_focus))
+          // IconButton(onPressed: (){
+          //   Navigator.pushNamed(context, FilteringPage.routeName);
+          // }, icon: Icon(Icons.filter_center_focus))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -68,7 +68,8 @@ class _ContactListPageState extends State<ContactListPage> {
         },
       ),
 
-      body: contactList.length==0?Center(child: Text('No Data to Show.. \n Please add some data..')): ListView.builder(
+      body: contactList.length==0?Center(child: Text('No Data to Show.. \n Please add some data..')):
+      ListView.builder(
         itemCount:contactList.length,
         itemBuilder: (context,index) =>
             Column(
@@ -100,7 +101,7 @@ class _ContactListPageState extends State<ContactListPage> {
                     ),
                     tileColor: Colors.white,
                     title: Text('${contactList[index].name!}( ${contactList[index].designation!} )'),
-                    subtitle: Text(contactList[index].zone!),
+                    subtitle: Text(contactList[index].circle!),
                     onTap: (){
                       final contact=contactList[index];
                       Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contact);
@@ -130,7 +131,8 @@ class SearchContact extends SearchDelegate<String>{
   Widget? buildLeading(BuildContext context) {
     // TODO: implement buildLeading
     return IconButton(onPressed: (){
-      close(context, '');
+      // close(context,query);
+      Navigator.pushNamed(context, ContactListPage.routeName);
     }, icon: Icon(Icons.arrow_back));
   }
 
@@ -149,18 +151,51 @@ class SearchContact extends SearchDelegate<String>{
   @override
   Widget buildSuggestions(BuildContext context) {
 
-    final suggestionList = (query==null)? contactsName:
-    contactsName.where((contacts) =>
-        contacts.toLowerCase().startsWith(query.toLowerCase())).toList();
+    // final suggestionList = (query==null)? contactList:
+    // contactList.where((contacts) =>
+    //     contacts.name!.toLowerCase().startsWith(query.toLowerCase()) ||
+    //         contacts.circle!.toLowerCase().startsWith(query.toLowerCase() )).toList();
+
+    final suggestionList = (query==null)? contactList:contactList.where((element){
+
+      return element.name!.toLowerCase().startsWith(query.toLowerCase()) ||
+          element.circle!.toLowerCase().startsWith(query.toLowerCase())||
+          element.designation!.toLowerCase().startsWith(query.toLowerCase());
+    } ).toList();
+
+
 
     return ListView.builder(
       itemCount: suggestionList.length,
       itemBuilder: (context,index)=>ListTile(
         onTap: (){
-
-          close(context, suggestionList[index]);
+          final contact=suggestionList[index];
+          Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contact);
         },
-        title: Text(suggestionList[index]),
+        title: Text(suggestionList[index].name!),
+        leading: Container(
+          decoration:new BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: Colors.orange,
+                  width: 1
+              )
+          ),
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(
+              suggestionList[index].image!,
+            ),
+            backgroundColor: Colors.orange,
+            radius: 30,
+          ),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.call,color: Colors.green,),
+          onPressed: (){
+            makePhoneCall(suggestionList[index].number!);
+          },
+        ),
+        subtitle: Text('Circle : ${suggestionList[index].circle!}'),
       ),
     );
   }

@@ -212,6 +212,7 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
                 ElevatedButton(
                   onPressed: () {
                     if (adminCon.text == 'admin' && adminPass.text == '123') {
+                      Navigator.pop(context);
                       Navigator.pushNamed(
                           context, UpdateContact.routeName, arguments: contact);
                     }
