@@ -291,14 +291,7 @@ class _UpdateContactState extends State<UpdateContact> {
     );
   }
   void _saveContact() async {
-    if(_dob == null) {
-      showMsg(context, 'Please select a date');
-      return;
-    }
-    if(_imageUrl == null) {
-      showMsg(context, 'Please select an image');
-      return;
-    }
+
     if(from_key.currentState!.validate()){
       final contactModel = ContactModel(
           id: contact.id!,
@@ -344,6 +337,7 @@ class _UpdateContactState extends State<UpdateContact> {
   }
 
   void _getImage() async {
+    _imageUrl=null;
     final selectedImage = await ImagePicker().pickImage(source: _imageSource);
     if (selectedImage != null) {
       setState(() {

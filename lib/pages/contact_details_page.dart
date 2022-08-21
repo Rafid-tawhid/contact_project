@@ -38,8 +38,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
           IconButton(
             icon: Icon(Icons.admin_panel_settings),
             onPressed: () {
-              showTitleDialog();
-              // Navigator.pushNamed(context, UpdateContact.routeName,arguments: contact);
+             // showTitleDialog();
+               Navigator.pushNamed(context, UpdateContact.routeName,arguments: contact);
             },
           )
         ],
