@@ -1,6 +1,4 @@
 
-import 'dart:ffi';
-
 import 'package:contact_project/models/contact_model.dart';
 import 'package:contact_project/pages/contact_details_page.dart';
 import 'package:contact_project/pages/filtering_page.dart';
@@ -48,15 +46,20 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(title: Text('Contact List'),
         actions: [
           IconButton(onPressed: (){
+
            // Navigator.pushNamed(context, FilteringPage.routeName);
             showSearch(context: context, delegate: SearchContact()).then((name){
-              provider.contactList.forEach((element) {
-                if(element.name==name){
-                  contactFinal=element;
-                }
-              });
+              if(name!=null){
+                provider.contactList.forEach((element) {
+                  if(element.name==name){
+                    contactFinal=element;
+                  }
+                });
+                Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contactFinal);
+              }
+
               //final newContact=contactList[int.parse(index!)];
-              Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contactFinal);
+
             });
           }, icon: Icon(Icons.search)),
           IconButton(onPressed: (){
@@ -148,10 +151,7 @@ class SearchContact extends SearchDelegate<String>{
     // TODO: implement buildResults
     return ListTile(
       title: Center(child: Text('No Data Found')),
-      // leading: Icon(Icons.search),
-      // onTap: (){
-      //   close(context, query);
-      // },
+
     );
   }
 
@@ -164,13 +164,12 @@ class SearchContact extends SearchDelegate<String>{
     //     contacts.name!.toLowerCase().startsWith(query.toLowerCase()) ||
     //         contacts.circle!.toLowerCase().startsWith(query.toLowerCase() )).toList();
 
-    final suggestionList = (query==null)? contactProvider.contactList2:contactProvider.contactList2.where((element){
-
+    final suggestionList = (query==null)? contactProvider.contactList2:
+    contactProvider.contactList2.where((element){
       return element.name!.toLowerCase().startsWith(query.toLowerCase()) ||
           element.circle!.toLowerCase().startsWith(query.toLowerCase())||
           element.designation!.toLowerCase().startsWith(query.toLowerCase());
     } ).toList();
-
 
 
     return ListView.builder(

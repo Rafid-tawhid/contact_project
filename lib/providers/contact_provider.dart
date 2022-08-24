@@ -22,6 +22,7 @@ class ContactProvider extends ChangeNotifier {
       DbHelper.addNewContact(contactModel);
 
   getAllContacts() {
+    contactList2.clear();
     DbHelper.getAllContacts().listen((event) {
       contactList = List.generate(event.docs.length, (index) =>
           ContactModel.fromMap(event.docs[index].data()));
