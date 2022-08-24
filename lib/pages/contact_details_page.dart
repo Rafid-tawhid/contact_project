@@ -173,6 +173,8 @@ class _ContactDetailsPageState extends State<ContactDetailsPage> {
   }
 
   Future showTitleDialog() {
+    Navigator.pushNamed(
+        context, UpdateContact.routeName, arguments: contact);
     final adminCon = TextEditingController();
     final adminPass = TextEditingController();
     return showDialog(

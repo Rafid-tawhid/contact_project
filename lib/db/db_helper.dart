@@ -41,4 +41,10 @@ class DbHelper {
     where('zone',isEqualTo: zone).snapshots();
   }
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllContactByFilteringCircle(String circle){
+
+    return _db.collection(collectionContact).
+    where('circle',isEqualTo: circle).snapshots();
+  }
+
 }

@@ -168,7 +168,7 @@ class _NewContactPageState extends State<NewContactPage> {
                     onChanged: (value){
                       _circle=value;
                     },
-                    items: circleList.map((circle) =>
+                    items: provider.circleList.map((circle) =>
                         DropdownMenuItem(
                             child: Text(circle),
                           value: circle,
@@ -192,7 +192,7 @@ class _NewContactPageState extends State<NewContactPage> {
                         onChanged: (value){
                           _zone=value;
                         },
-                        items: zoneList.map((zones) =>
+                        items: provider.zoneList.map((zones) =>
                             DropdownMenuItem(
                               child: Text(zones),
                               value: zones,

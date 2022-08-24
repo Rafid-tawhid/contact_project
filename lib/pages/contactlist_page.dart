@@ -22,17 +22,20 @@ class ContactListPage extends StatefulWidget {
 class _ContactListPageState extends State<ContactListPage> {
 
   ContactModel? contactFinal;
-
+  late ContactProvider provider;
+  bool allContactCall=true;
 
   @override
   void didChangeDependencies() {
-   Provider.of<ContactProvider>(context,listen: true).
+  if(allContactCall){
+    provider = Provider.of<ContactProvider>(context,listen: true) ..
     getAllContacts();
+    allContactCall=false;
+  }
+
    Provider.of<ContactProvider>(context,listen: false).
    getAllCircles();
    Provider.of<ContactProvider>(context,listen: false).getAllZones();
-  
-
 
     super.didChangeDependencies();
   }
@@ -47,7 +50,7 @@ class _ContactListPageState extends State<ContactListPage> {
           IconButton(onPressed: (){
            // Navigator.pushNamed(context, FilteringPage.routeName);
             showSearch(context: context, delegate: SearchContact()).then((name){
-              contactList.forEach((element) {
+              provider.contactList.forEach((element) {
                 if(element.name==name){
                   contactFinal=element;
                 }
@@ -56,9 +59,12 @@ class _ContactListPageState extends State<ContactListPage> {
               Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contactFinal);
             });
           }, icon: Icon(Icons.search)),
-          // IconButton(onPressed: (){
-          //   Navigator.pushNamed(context, FilteringPage.routeName);
-          // }, icon: Icon(Icons.filter_center_focus))
+          IconButton(onPressed: (){
+            Navigator.pushNamed(context, FilteringPage.routeName).then((circle) {
+              provider.
+              getFilteredContactCircle(circle.toString());
+            });
+          }, icon: Icon(Icons.filter_center_focus))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -68,9 +74,9 @@ class _ContactListPageState extends State<ContactListPage> {
         },
       ),
 
-      body: contactList.length==0?Center(child: Text('No Data to Show.. \n Please add some data..')):
+      body: provider.contactList.length==0?Center(child: Text('No Data to Show.. \n Please add some data..')):
       ListView.builder(
-        itemCount:contactList.length,
+        itemCount:provider.contactList.length,
         itemBuilder: (context,index) =>
             Column(
               children: [
@@ -80,14 +86,14 @@ class _ContactListPageState extends State<ContactListPage> {
                     leading: Container(
                       decoration:new BoxDecoration(
                           shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.orange,
-                          width: 1
-                        )
+                          border: Border.all(
+                              color: Colors.orange,
+                              width: 1
+                          )
                       ),
                       child: CircleAvatar(
                         backgroundImage: NetworkImage(
-                          contactList[index].image!,
+                          provider.contactList[index].image!,
                         ),
                         backgroundColor: Colors.orange,
                         radius: 30,
@@ -96,14 +102,14 @@ class _ContactListPageState extends State<ContactListPage> {
                     trailing: IconButton(
                       icon: Icon(Icons.call,color: Colors.green,),
                       onPressed: (){
-                        makePhoneCall(contactList[index].number!);
+                        makePhoneCall(provider.contactList[index].number!);
                       },
                     ),
                     tileColor: Colors.white,
-                    title: Text('${contactList[index].name!}( ${contactList[index].designation!} )'),
-                    subtitle: Text(contactList[index].circle!),
+                    title: Text('${provider.contactList[index].name!}( ${provider.contactList[index].designation!} )'),
+                    subtitle: Text(provider.contactList[index].circle!),
                     onTap: (){
-                      final contact=contactList[index];
+                      final contact=provider.contactList[index];
                       Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contact);
                     },
                   ),
@@ -114,6 +120,7 @@ class _ContactListPageState extends State<ContactListPage> {
       ),
     );
   }
+
 }
 class SearchContact extends SearchDelegate<String>{
   @override
@@ -150,13 +157,14 @@ class SearchContact extends SearchDelegate<String>{
 
   @override
   Widget buildSuggestions(BuildContext context) {
-
+    ContactProvider contactProvider;
+    contactProvider=Provider.of<ContactProvider>(context);
     // final suggestionList = (query==null)? contactList:
     // contactList.where((contacts) =>
     //     contacts.name!.toLowerCase().startsWith(query.toLowerCase()) ||
     //         contacts.circle!.toLowerCase().startsWith(query.toLowerCase() )).toList();
 
-    final suggestionList = (query==null)? contactList:contactList.where((element){
+    final suggestionList = (query==null)? contactProvider.contactList2:contactProvider.contactList2.where((element){
 
       return element.name!.toLowerCase().startsWith(query.toLowerCase()) ||
           element.circle!.toLowerCase().startsWith(query.toLowerCase())||
@@ -199,5 +207,6 @@ class SearchContact extends SearchDelegate<String>{
       ),
     );
   }
-  
+
 }
+

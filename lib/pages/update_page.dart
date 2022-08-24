@@ -71,8 +71,12 @@ class _UpdateContactState extends State<UpdateContact> {
         actions: [
           _isUploading?Padding(
             padding: const EdgeInsets.all(3.0),
-            child: CircularProgressIndicator(
-              color: Colors.white,
+            child: Container(
+              height: 30,
+              width: 30,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
             ),
           ): IconButton(onPressed: _saveContact, icon: Icon(Icons.save))
         ],
@@ -185,7 +189,7 @@ class _UpdateContactState extends State<UpdateContact> {
                           onChanged: (value){
                             _circle=value;
                           },
-                          items: circleList.map((circle) =>
+                          items: provider.circleList.map((circle) =>
                               DropdownMenuItem(
                                 child: Text(circle),
                                 value: circle,
@@ -209,7 +213,7 @@ class _UpdateContactState extends State<UpdateContact> {
                             onChanged: (value){
                               _zone=value;
                             },
-                            items: zoneList.map((zones) =>
+                            items: provider.zoneList.map((zones) =>
                                 DropdownMenuItem(
                                   child: Text(zones),
                                   value: zones,
@@ -249,11 +253,10 @@ class _UpdateContactState extends State<UpdateContact> {
                 child: Padding(
                   padding: const EdgeInsets.all(5),
                   child: _imageUrl == null
-                      ?  Image.network(
-                    contact.image!,
-                    height: 110,
-                    width: 110,
-                  )
+                      ? Image.network(
+                      height: 110,
+                      width: 110,
+                      contact.image!)
                       : Image.network(
                     _imageUrl!,
                     height: 110,
@@ -291,7 +294,9 @@ class _UpdateContactState extends State<UpdateContact> {
     );
   }
   void _saveContact() async {
-
+    if(_imageUrl==null){
+      _imageUrl=contact.image;
+    }
     if(from_key.currentState!.validate()){
       final contactModel = ContactModel(
           id: contact.id!,
@@ -309,9 +314,9 @@ class _UpdateContactState extends State<UpdateContact> {
       // context
       //     .read<ContactProvider>()
       //     .updateProfile(contact.id!,contact.toMap())
-    DbHelper.updateProfile(contact.id!, contactModel.toMap())
+      DbHelper.updateProfile(contact.id!, contactModel.toMap())
           .then((value) {
-        nameControler.clear();
+        showMsg(context, 'Update Successful');
         Navigator.pushReplacementNamed(context, ContactListPage.routeName);
       });
       // final status = await Provider

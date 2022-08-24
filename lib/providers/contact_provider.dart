@@ -8,13 +8,16 @@ import 'package:image_picker/image_picker.dart';
 
 import '../db/db_helper.dart';
 
-List<ContactModel> contactList=[];
-List<String> circleList=[];
-List<String> zoneList=[];
-final List<String> contactsName=[];
-List<ContactModel> filteredContactList=[];
+
 
 class ContactProvider extends ChangeNotifier {
+  List<ContactModel> contactList=[];
+  List<ContactModel> contactList2=[];
+  List<String> circleList=[];
+  List<String> zoneList=[];
+  final List<String> contactsName=[];
+  List<ContactModel> filteredContactList=[];
+  List<ContactModel> filteredContactListCircle=[];
   Future<void> addCategory(ContactModel contactModel) =>
       DbHelper.addNewContact(contactModel);
 
@@ -22,6 +25,7 @@ class ContactProvider extends ChangeNotifier {
     DbHelper.getAllContacts().listen((event) {
       contactList = List.generate(event.docs.length, (index) =>
           ContactModel.fromMap(event.docs[index].data()));
+      contactList2.addAll(contactList);
       notifyListeners();
     });
     contactsName.clear();
@@ -70,5 +74,15 @@ class ContactProvider extends ChangeNotifier {
     });
 
     print('SIZE OF FILTER ${filteredContactList.length}');
+  }
+
+  getFilteredContactCircle(String circle) {
+
+    DbHelper.getAllContactByFilteringCircle(circle).listen((event) {
+      contactList = List.generate(event.docs.length, (index) =>
+          ContactModel.fromMap(event.docs[index].data()));
+      print('SIZE OF FILTER ${contactList.length}');
+      notifyListeners();
+    });
   }
 }

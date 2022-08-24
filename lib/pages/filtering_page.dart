@@ -24,11 +24,11 @@ class _FilteringPageState extends State<FilteringPage> {
 
  List<ContactModel> contact=[];
 
-
-  @override
-  void initState() {
-    contact=contactList;
-  }
+  //
+  // @override
+  // void initState() {
+  //   contact=provider.contactList;
+  // }
 
   @override
   void didChangeDependencies() {
@@ -39,80 +39,38 @@ class _FilteringPageState extends State<FilteringPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: contactList.length==0?Center(child: Text('No Data to Show.. \n Please add some data..')):
-      SafeArea(
-        child: Column(
-          children: [
-            
-            buildSearch(),
-            Expanded(
-              child: ListView.builder(
-                itemCount:contact.length,
-                itemBuilder: (context,index) =>
-                    Column(
-                      children: [
-                        Card(
-                          elevation: 3,
-                          child: ListTile(
-                            leading: Container(
-                              decoration:new BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: Colors.orange,
-                                      width: 1
-                                  )
-                              ),
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  contactList[index].image!,
-                                ),
-                                backgroundColor: Colors.orange,
-                                radius: 30,
-                              ),
-                            ),
-                            trailing: IconButton(
-                              icon: Icon(Icons.call,color: Colors.green,),
-                              onPressed: (){
-                                makePhoneCall(contactList[index].number!);
-                              },
-                            ),
-                            tileColor: Colors.white,
-                            title: Text('${contactList[index].name!}( ${contactList[index].designation!} )'),
-                            subtitle: Text(contactList[index].circle!),
-                            onTap: (){
-                              final contact=contactList[index];
-                              Navigator.pushNamed(context, ContactDetailsPage.routeName,arguments: contact);
-                            },
-                          ),
-                        ),
+      appBar: AppBar(title: Text('Circles'),),
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: GridView(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 5,
+              mainAxisSpacing: 5,
+              mainAxisExtent: 150
+          ),
+          children: provider.circleList.map((circleNo) =>InkWell(
+            onTap: (){
+              Navigator.pop(context,circleNo);
 
-                      ],
-                    ),
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.orange,
+                borderRadius: BorderRadius.circular(10)
+              ),
+              height: MediaQuery.of(context).size.height/5,
+              width: MediaQuery.of(context).size.height/3,
+              child: Center(
+                child: Text(circleNo,style: TextStyle(color: Colors.white,fontSize: 18),),
               ),
             ),
-          ],
+          )).toList(),
         ),
       ),
     );
 
   }
-  Widget buildSearch()=> SearchWidget(
-    text: query,
-    hintText:'Title or Name',
-    onChanged: (String query) {
-      final contact=contactList.where((element){
-         final name=element.name!.toLowerCase();
-         final circle=element.circle!.toLowerCase();
-         final search=query.toLowerCase();
 
-         return name.contains(search)||circle.contains(search);
-       } ).toList();
-
-       setState(() {
-         this.query=query;
-         this.contact=contact;
-       });
-    },
-  );
 }
 
