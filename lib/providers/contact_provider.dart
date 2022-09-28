@@ -26,13 +26,37 @@ class ContactProvider extends ChangeNotifier {
     DbHelper.getAllContacts().listen((event) {
       contactList = List.generate(event.docs.length, (index) =>
           ContactModel.fromMap(event.docs[index].data()));
+      contactList.sort((a, b) => a.name!.compareTo(b.name!));
+      notifyListeners();
       contactList2.addAll(contactList);
       notifyListeners();
+      print('getAllContacts ${contactList.length}');
     });
-    contactsName.clear();
-    contactList.forEach((element) {
-      contactsName.add(element.name!);
+
+  }
+
+  updateContactToFavorite(ContactModel contact){
+    if(contact.isFav=='0'){
+      contact.isFav='1';
+      DbHelper.updateContactToFav(contact);
+    }
+    else{
+      contact.isFav='0';
+      DbHelper.updateContactToFav(contact);
+    }
+
+
+  }
+
+  getAllFavoriteContacts() {
+
+    DbHelper.getAllFavContacts().listen((event) {
+      contactList = List.generate(event.docs.length, (index) =>
+          ContactModel.fromMap(event.docs[index].data()));
+      print('getAllFavoriteContacts ${contactList.length}');
     });
+
+
   }
 
   getAllCircles() {
@@ -87,3 +111,62 @@ class ContactProvider extends ChangeNotifier {
     });
   }
 }
+
+// List<ContactModel> faw=[
+//   ContactModel(id: '1',name: 'aaa'),
+//   ContactModel(id: '1',name: 'bbb'),
+//   ContactModel(id: '1',name: 'ccc'),
+//   ContactModel(id: '1',name: 'ddd'),
+//   ContactModel(id: '1',name: 'eee'),
+//   ContactModel(id: '1',name: 'fff'),
+//   ContactModel(id: '1',name: 'ggg'),
+//   ContactModel(id: '1',name: 'hh'),
+//   ContactModel(id: '1',name: 'ii'),
+//   ContactModel(id: '1',name: 'jj'),
+//   ContactModel(id: '1',name: 'kk'),
+//   ContactModel(id: '1',name: 'll'),
+//   ContactModel(id: '1',name: 'xx'),
+//   ContactModel(id: '1',name: 'zz'),
+//   ContactModel(id: '1',name: 'aaa'),
+//   ContactModel(id: '1',name: 'bbb'),
+//   ContactModel(id: '1',name: 'ccc'),
+//   ContactModel(id: '1',name: 'ddd'),
+//   ContactModel(id: '1',name: 'eee'),
+//   ContactModel(id: '1',name: 'fff'),
+//   ContactModel(id: '1',name: 'ggg'),
+//   ContactModel(id: '1',name: 'hh'),
+//   ContactModel(id: '1',name: 'ii'),
+//   ContactModel(id: '1',name: 'jj'),
+//   ContactModel(id: '1',name: 'kk'),
+//   ContactModel(id: '1',name: 'll'),
+//   ContactModel(id: '1',name: 'xx'),
+//   ContactModel(id: '1',name: 'zz'),
+//   ContactModel(id: '1',name: 'aaa'),
+//   ContactModel(id: '1',name: 'bbb'),
+//   ContactModel(id: '1',name: 'ccc'),
+//   ContactModel(id: '1',name: 'ddd'),
+//   ContactModel(id: '1',name: 'eee'),
+//   ContactModel(id: '1',name: 'fff'),
+//   ContactModel(id: '1',name: 'ggg'),
+//   ContactModel(id: '1',name: 'hh'),
+//   ContactModel(id: '1',name: 'ii'),
+//   ContactModel(id: '1',name: 'jj'),
+//   ContactModel(id: '1',name: 'kk'),
+//   ContactModel(id: '1',name: 'll'),
+//   ContactModel(id: '1',name: 'xx'),
+//   ContactModel(id: '1',name: 'zz'),
+//   ContactModel(id: '1',name: 'aaa'),
+//   ContactModel(id: '1',name: 'bbb'),
+//   ContactModel(id: '1',name: 'ccc'),
+//   ContactModel(id: '1',name: 'ddd'),
+//   ContactModel(id: '1',name: 'eee'),
+//   ContactModel(id: '1',name: 'fff'),
+//   ContactModel(id: '1',name: 'ggg'),
+//   ContactModel(id: '1',name: 'hh'),
+//   ContactModel(id: '1',name: 'ii'),
+//   ContactModel(id: '1',name: 'jj'),
+//   ContactModel(id: '1',name: 'kk'),
+//   ContactModel(id: '1',name: 'll'),
+//   ContactModel(id: '1',name: 'xx'),
+//   ContactModel(id: '1',name: 'zz'),
+// ];

@@ -42,30 +42,54 @@ class _FilteringPageState extends State<FilteringPage> {
       appBar: AppBar(title: Text('Circles'),),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: GridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 5,
-              mainAxisSpacing: 5,
-              mainAxisExtent: 150
-          ),
-          children: provider.circleList.map((circleNo) =>InkWell(
-            onTap: (){
-              Navigator.pop(context,circleNo);
-
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.orange,
-                borderRadius: BorderRadius.circular(10)
+        child: Column(
+          children: [
+            GridView(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  mainAxisExtent: 150
               ),
-              height: MediaQuery.of(context).size.height/5,
-              width: MediaQuery.of(context).size.height/3,
-              child: Center(
-                child: Text(circleNo,style: TextStyle(color: Colors.white,fontSize: 18),),
+              children: provider.circleList.map((circleNo) =>InkWell(
+                onTap: (){
+                  Navigator.pop(context,circleNo);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.orange,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  height: MediaQuery.of(context).size.height/5,
+                  width: MediaQuery.of(context).size.height/3,
+                  child: Center(
+                    child: Text(circleNo,style: TextStyle(color: Colors.white,fontSize: 18),),
+                  ),
+                ),
+              )).toList(),
+            ),
+            SizedBox(height: 70,),
+            Consumer<ContactProvider>(
+              builder: (context,provider,_)=>InkWell(
+                onTap: (){
+                  provider.getAllContacts();
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(10)
+                  ),
+                  height: MediaQuery.of(context).size.height/9,
+                  width: MediaQuery.of(context).size.width/1.5,
+                  child: Center(
+                    child: Text('All Contacts',style: TextStyle(color: Colors.white,fontSize: 18),),
+                  ),
+                ),
               ),
             ),
-          )).toList(),
+          ],
         ),
       ),
     );

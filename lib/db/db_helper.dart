@@ -20,9 +20,19 @@ class DbHelper {
     print('Data ${contactModel.toString()}');
     return doc.set(contactModel.toMap());
   }
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllContacts() =>
+
+  static Future<void> updateContactToFav(ContactModel contactModel) {
+    final doc = _db.collection(collectionContact).doc(contactModel.id);
+
+    return doc.update(contactModel.toMap());
+  }
+
+
+    static Stream<QuerySnapshot<Map<String, dynamic>>> getAllContacts() =>
       _db.collection(collectionContact).snapshots();
 
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllFavContacts() =>
+      _db.collection(collectionContact).where('isFav',isEqualTo:'1',).snapshots();
 
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllZones() =>
       _db.collection(collectionZones).snapshots();

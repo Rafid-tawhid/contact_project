@@ -8,6 +8,7 @@ const String tableContactColDob='doJoin';
 const String tableContactColZone='zone';
 const String tableContactColCircle='circle';
 const String tableContactColImage='image';
+const String tableContactColFav='isFav';
 
 
 class ContactModel{
@@ -21,6 +22,7 @@ class ContactModel{
   String? circle;
   String? doJoin;
   String? image;
+  String isFav;
 
   ContactModel(
       {this.id,
@@ -32,7 +34,10 @@ class ContactModel{
       this.zone,
       this.circle,
       this.doJoin,
-      this.image});
+      this.image,
+        this.isFav='0'
+      });
+
 
 
   Map<String,dynamic> toMap(){
@@ -47,6 +52,7 @@ class ContactModel{
       tableContactColCircle:circle,
       tableContactColDob:doJoin,
       tableContactColImage:image,
+      tableContactColFav:isFav,
 
     };
 
@@ -65,11 +71,12 @@ class ContactModel{
     zone: map[tableContactColZone],
     circle: map[tableContactColCircle],
     image: map[tableContactColImage],
+    isFav: map[tableContactColFav],
 
   );
 
   @override
   String toString() {
-    return 'ContactModel{id: $id, name: $name, number: $number, designation: $designation, email: $email, address: $address, zone: $zone, circle: $circle, doJoin: $doJoin, image: $image}';
+    return 'ContactModel{id: $id, name: $name, number: $number, designation: $designation, email: $email, address: $address, zone: $zone, circle: $circle, doJoin: $doJoin, image: $image, isFav: $isFav}';
   }
 }
