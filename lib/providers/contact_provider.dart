@@ -39,10 +39,12 @@ class ContactProvider extends ChangeNotifier {
     if(contact.isFav=='0'){
       contact.isFav='1';
       DbHelper.updateContactToFav(contact);
+
     }
     else{
       contact.isFav='0';
       DbHelper.updateContactToFav(contact);
+
     }
 
 
@@ -53,6 +55,7 @@ class ContactProvider extends ChangeNotifier {
     DbHelper.getAllFavContacts().listen((event) {
       contactList = List.generate(event.docs.length, (index) =>
           ContactModel.fromMap(event.docs[index].data()));
+      notifyListeners();
       print('getAllFavoriteContacts ${contactList.length}');
     });
 

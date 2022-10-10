@@ -108,6 +108,9 @@ class _ContactListPageState extends State<ContactListPage> {
                         onPressed: () {
                           final contact= providers.contactList[index];
                           provider.updateContactToFavorite(contact);
+                          setState(() {
+                            selectedIndex=1;
+                          });
                           // ArtSweetAlert.show(
                           //     context: context,
                           //     artDialogArgs: ArtDialogArgs(
@@ -163,6 +166,7 @@ class _ContactListPageState extends State<ContactListPage> {
             });
             if(selectedIndex==0){
               provider.getAllContacts();
+
             }
             if(selectedIndex==1){
               provider.getAllFavoriteContacts();

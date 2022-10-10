@@ -23,7 +23,6 @@ class DbHelper {
 
   static Future<void> updateContactToFav(ContactModel contactModel) {
     final doc = _db.collection(collectionContact).doc(contactModel.id);
-
     return doc.update(contactModel.toMap());
   }
 
