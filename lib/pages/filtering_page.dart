@@ -58,7 +58,7 @@ class _FilteringPageState extends State<FilteringPage> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.orange,
+                      color: Colors.green,
                     borderRadius: BorderRadius.circular(10)
                   ),
                   height: MediaQuery.of(context).size.height/5,
@@ -73,12 +73,13 @@ class _FilteringPageState extends State<FilteringPage> {
             Consumer<ContactProvider>(
               builder: (context,provider,_)=>InkWell(
                 onTap: (){
+                  provider.contactList.clear();
                   provider.getAllContacts();
                   Navigator.pop(context);
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.orange,
+                      color: Colors.green,
                       borderRadius: BorderRadius.circular(10)
                   ),
                   height: MediaQuery.of(context).size.height/9,

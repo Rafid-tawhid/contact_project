@@ -23,6 +23,7 @@ class ContactListPage extends StatefulWidget {
 class _ContactListPageState extends State<ContactListPage> {
   ContactModel? contactFinal;
   ContactModel? contactFinal2;
+  ContactModel? demoContact;
   late ContactProvider provider;
   bool allContactCall = true;
   int selectedIndex=0;
@@ -61,7 +62,7 @@ class _ContactListPageState extends State<ContactListPage> {
                 });
               },
               icon: Icon(Icons.search)),
-          IconButton(
+              IconButton(
               onPressed: () {
                 setState(() {
                   selectedIndex=0;
@@ -80,7 +81,7 @@ class _ContactListPageState extends State<ContactListPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.pushNamed(context, NewContactPage.routeName);
+          Navigator.pushNamed(context, NewContactPage.routeName,);
         },
       ),
       body: Consumer<ContactProvider>(
@@ -96,40 +97,50 @@ class _ContactListPageState extends State<ContactListPage> {
                         decoration: new BoxDecoration(
                             shape: BoxShape.circle,
                             border:
-                            Border.all(color: Colors.orange, width: 1)),
+                            Border.all(color: Colors.green, width: 1)),
                         child: CircleAvatar(
                           backgroundImage: NetworkImage(
                             providers.contactList[index].image!,
                           ),
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Colors.green,
                           radius: 30,
                         ),
                       ),
                       trailing: IconButton(
                         icon: Icon(providers.contactList[index].isFav=='0'?
-                        Icons.favorite_border:Icons.favorite),
+                        Icons.favorite_border:Icons.favorite,color: Colors.green,),
                         onPressed: () {
-                          final contact= providers.contactList[index];
-                          provider.updateContactToFavorite(contact);
-                          setState(() {
-                            selectedIndex=1;
-                          });
-                          // ArtSweetAlert.show(
-                          //     context: context,
-                          //     artDialogArgs: ArtDialogArgs(
-                          //         confirmButtonText: 'Add',
-                          //         cancelButtonText: 'Cancel',
-                          //         type: ArtSweetAlertType.info,
-                          //         title: "Add Favorite",
-                          //         text: "Do you want to add ${providers.contactList[index].name} as Favorite",
-                          //         onConfirm: (){
-                          //           final contact= providers.contactList[index];
-                          //           provider.updateContactToFavorite(contact);
-                          //           print(contact.isFav);
-                          //           Navigator.pop(context);
-                          //         }
-                          //     )
-                          // );
+                          ArtSweetAlert.show(
+                              context: context,
+                              artDialogArgs: ArtDialogArgs(
+                                  confirmButtonText: providers.contactList[index].isFav=='0'?'Add':'Remove',
+                                  cancelButtonText: 'Cancel',
+                                  showCancelBtn: true,
+                                  onCancel: (){
+                                    Navigator.pop(context);
+                                  },
+                                  type: ArtSweetAlertType.info,
+                                  title: providers.contactList[index].isFav=='0'?"Add Favorite":"Remove Favorite",
+                                  text: providers.contactList[index].isFav=='0' ?
+                                  "Do you want to add ${providers.contactList[index].name} as Favorite":
+                                  "Do you want to remove ${providers.contactList[index].name} from Favorite",
+                                  onConfirm: (){
+                                    final contact= providers.contactList[index];
+                                    provider.contactList.clear();
+                                    provider.updateContactToFavorite(contact).then((value){
+                                      provider.getAllFavoriteContacts();
+                                      setState(() {
+                                        selectedIndex=1;
+                                      });
+                                      Navigator.pop(context);
+                                    });
+
+                                    // provider.contactList.clear();
+                                    // provider.getAllContacts();
+
+                                  }
+                              )
+                          );
                         },
                       ),
                       tileColor: Colors.white,
@@ -141,6 +152,32 @@ class _ContactListPageState extends State<ContactListPage> {
                         Navigator.pushNamed(
                             context, ContactDetailsPage.routeName,
                             arguments: contact);
+                      },
+                      onLongPress: (){
+                        final contact = providers.contactList[index];
+                        ArtSweetAlert.show(
+                            context: context,
+                            artDialogArgs: ArtDialogArgs(
+                                confirmButtonText: 'OK',
+                                cancelButtonText: 'Cancel',
+                                type: ArtSweetAlertType.danger,
+                                title: 'Delete Contact',
+                                text: 'Do you really want to delete ${contact.name}',
+                                onConfirm: (){
+                                  provider.deleteContact(contact.id!).then((value){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('${contact.name} deleted succesfully'))
+                                    );
+                                    provider.contactList.clear();
+                                    provider.getAllContacts();
+                                  });
+                                  Navigator.pop(context);
+                                }
+                            )
+                        );
+
+
+
                       },
                     ),
                     Container(
@@ -159,7 +196,7 @@ class _ContactListPageState extends State<ContactListPage> {
         clipBehavior: Clip.antiAlias,
         child: BottomNavigationBar(
           currentIndex: selectedIndex,
-          selectedItemColor: Colors.orange,
+          selectedItemColor: Colors.green,
           backgroundColor: Colors.white,
           unselectedItemColor: Colors.grey,
           onTap: (value){
@@ -167,10 +204,11 @@ class _ContactListPageState extends State<ContactListPage> {
               selectedIndex=value;
             });
             if(selectedIndex==0){
+              provider.contactList.clear();
               provider.getAllContacts();
-
             }
             if(selectedIndex==1){
+              provider.contactList.clear();
               provider.getAllFavoriteContacts();
             }
           },
@@ -239,11 +277,11 @@ class SearchContact extends SearchDelegate<String> {
         : contactProvider.contactList2.where((element) {
             return element.name!
                     .toLowerCase()
-                    .startsWith(query.toLowerCase()) ||
-                element.circle!.toLowerCase().startsWith(query.toLowerCase()) ||
+                    .contains(query.toLowerCase()) ||
+                element.circle!.toLowerCase().contains(query.toLowerCase()) ||
                 element.designation!
                     .toLowerCase()
-                    .startsWith(query.toLowerCase());
+                    .contains(query.toLowerCase());
           }).toList();
 
     return ListView.builder(
@@ -258,12 +296,12 @@ class SearchContact extends SearchDelegate<String> {
         leading: Container(
           decoration: new BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.orange, width: 1)),
+              border: Border.all(color: Colors.green, width: 1)),
           child: CircleAvatar(
             backgroundImage: NetworkImage(
               suggestionList[index].image!,
             ),
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.green,
             radius: 30,
           ),
         ),

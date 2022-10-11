@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:contact_project/models/contact_model.dart';
+import 'package:contact_project/models/transfer_log_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,19 +14,32 @@ import '../db/db_helper.dart';
 class ContactProvider extends ChangeNotifier {
   List<ContactModel> contactList=[];
   List<ContactModel> contactList2=[];
+
+  List<TransferLogModel> transferList=[];
+  List<TransferLogModel> transferList2=[];
+
   List<String> circleList=[];
   List<String> zoneList=[];
   final List<String> contactsName=[];
   List<ContactModel> filteredContactList=[];
   List<ContactModel> filteredContactListCircle=[];
-  Future<void> addCategory(ContactModel contactModel) =>
+
+
+  Future<void> addNewContact(ContactModel contactModel) =>
       DbHelper.addNewContact(contactModel);
+
+  Future<void> addTransferInfo(TransferLogModel transferLogModel) =>
+      DbHelper.addTransferInfo(transferLogModel);
 
   getAllContacts() {
     contactList2.clear();
+    contactList.clear();
     DbHelper.getAllContacts().listen((event) {
-      contactList = List.generate(event.docs.length, (index) =>
-          ContactModel.fromMap(event.docs[index].data()));
+      for(var i in event.docs){
+        contactList.add(ContactModel.fromMap(i.data()));
+      }
+      // contactList = List.generate(event.docs.length, (index) =>
+      //     ContactModel.fromMap(event.docs[index].data()));
       contactList.sort((a, b) => a.name!.compareTo(b.name!));
       notifyListeners();
       contactList2.addAll(contactList);
@@ -35,23 +49,39 @@ class ContactProvider extends ChangeNotifier {
 
   }
 
-  updateContactToFavorite(ContactModel contact){
+  getAllTransferLog(String empId) {
+    transferList2.clear();
+    transferList.clear();
+    DbHelper.getAlltransferHistory(empId).then((event) {
+      for(var i in event.docs){
+        transferList2.add(TransferLogModel.fromMap(i.data()));
+      }
+      //contactList.sort((a, b) => a.name!.compareTo(b.name!));
+      transferList.addAll(transferList2);
+      notifyListeners();
+      print(transferList.first.empName);
+    });
+
+  }
+
+
+
+
+  Future<void> updateContactToFavorite(ContactModel contact) async{
+    contactList.clear();
     if(contact.isFav=='0'){
       contact.isFav='1';
       DbHelper.updateContactToFav(contact);
-
     }
     else{
       contact.isFav='0';
       DbHelper.updateContactToFav(contact);
-
     }
-
 
   }
 
   getAllFavoriteContacts() {
-
+    contactList.clear();
     DbHelper.getAllFavContacts().listen((event) {
       contactList = List.generate(event.docs.length, (index) =>
           ContactModel.fromMap(event.docs[index].data()));
@@ -113,7 +143,14 @@ class ContactProvider extends ChangeNotifier {
       notifyListeners();
     });
   }
+
+  Future<void> deleteContact(String id) {
+    return DbHelper.deleteContact(id);
+  }
 }
+
+
+
 
 // List<ContactModel> faw=[
 //   ContactModel(id: '1',name: 'aaa'),

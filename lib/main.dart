@@ -4,9 +4,11 @@ import 'package:contact_project/pages/contactlist_page.dart';
 import 'package:contact_project/pages/filtering_page.dart';
 import 'package:contact_project/pages/new_contact_page.dart';
 import 'package:contact_project/pages/update_page.dart';
+import 'package:contact_project/pages/visiting_card_page.dart';
 import 'package:contact_project/providers/contact_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 import 'firebase_options.dart';
@@ -32,10 +34,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      builder: EasyLoading.init(),
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.green,
       ),
      initialRoute: ContactListPage.routeName,
      routes: {
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
         ContactDetailsPage.routeName:(context)=>ContactDetailsPage(),
        UpdateContact.routeName:(context)=>UpdateContact(),
        FilteringPage.routeName:(context)=>FilteringPage(),
+       // VisitingCardPage.routeName:(context)=>VisitingCardPage(),
      },
 
     );

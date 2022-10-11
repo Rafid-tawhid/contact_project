@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:contact_project/pages/visiting_card_page.dart';
 import 'package:contact_project/providers/contact_provider.dart';
 import 'package:contact_project/utils/helper_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +37,10 @@ class _NewContactPageState extends State<NewContactPage> {
   @override
   void didChangeDependencies() {
     provider=Provider.of<ContactProvider>(context,listen: true);
-
+    // final ContactModel contact=ModalRoute.of(context)!.settings.arguments as ContactModel;
+    // if(contact!=null){
+    //   setPropertyToField(contact);
+    // }
     super.didChangeDependencies();
   }
 
@@ -53,7 +58,7 @@ class _NewContactPageState extends State<NewContactPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Contact List'),
+      appBar: AppBar(title: Text('Add new Contact'),
 
         actions: [
          _isUploading?Padding(
@@ -64,7 +69,16 @@ class _NewContactPageState extends State<NewContactPage> {
          ): IconButton(onPressed: _saveContact, icon: Icon(Icons.save))
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Visiting Card',
+        backgroundColor: Colors.white,
+        child: Text('Card',style: TextStyle(color: Colors.orange),),
+        onPressed: () {
+         // Navigator.pushNamed(context, VisitingCardPage.routeName);
+        },
+      ),
       body: Form(
+
         key: from_key,
         child: ListView(
           children: [
@@ -220,8 +234,8 @@ class _NewContactPageState extends State<NewContactPage> {
             ), //date of birth
 
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text('Chose an Image'),
+              padding: const EdgeInsets.all(18.0),
+              child: Text('Chose an Image',style: TextStyle(fontSize: 18),),
             ),
             Center(
               child: Card(
@@ -293,20 +307,25 @@ class _NewContactPageState extends State<NewContactPage> {
           circle: _circle,
           image: _imageUrl
       );
-       print(contact.toString());
-      context
-          .read<ContactProvider>()
-          .addCategory(contact)
-          .then((value) {
-        nameControler.clear();
-        Navigator.pop(context);
-      });
-      // final status = await Provider
-      //     .of<ContactProvider>(context, listen: false)
-      //     .addNewContact(contact);
-      // if(status){
+      EasyLoading.show();
+      // context
+      //     .read<ContactProvider>()
+      //     .addNewContact(contact)
+      //     .then((value) {
+      //   nameControler.clear();
       //   Navigator.pop(context);
-      // }
+      // });
+       await Provider
+          .of<ContactProvider>(context, listen: false)
+          .addNewContact(contact).then((value) {
+            EasyLoading.dismiss();
+            provider.contactList.clear();
+            provider.getAllContacts();
+            Navigator.pop(context);
+
+      });
+
+
     }
   }
 
@@ -338,5 +357,15 @@ class _NewContactPageState extends State<NewContactPage> {
         });
       } catch (e) {}
     }
+  }
+
+  void setPropertyToField(ContactModel contact) {
+  setState(() {
+    nameControler.text=contact.name!;
+    designationControler.text=contact.designation!;
+    addressControler.text=contact.address!;
+    emailControler.text=contact.email!;
+    numberControler.text=contact.number!;
+  });
   }
 }

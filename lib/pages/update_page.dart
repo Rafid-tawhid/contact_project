@@ -1,7 +1,9 @@
 import 'package:contact_project/db/db_helper.dart';
+import 'package:contact_project/models/transfer_log_model.dart';
 import 'package:contact_project/pages/contactlist_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -173,30 +175,31 @@ class _UpdateContactState extends State<UpdateContact> {
             SizedBox(height: 10,),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text('Change Zone or Circle',style: TextStyle(color: Colors.red,fontSize: 16),),
+              child: Text('Transfer This Employee To Another Circle',style: TextStyle(color: Colors.red,fontSize: 16),),
             ),
             Row(
               children: [
                 Expanded(child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child:DropdownButtonFormField(
-                          hint: Text('Select Circle'),
-                          value: _circle,
-                          onChanged: (value){
-                            _circle=value;
-                          },
-                          items: provider.circleList.map((circle) =>
-                              DropdownMenuItem(
-                                child: Text(circle),
-                                value: circle,
-                              )
-                          ).toList(),
-                        )
-                    ),
+                    // Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child:DropdownButtonFormField(
+                    //       hint: Text('Select Zones'),
+                    //       value: _zone,
+                    //       onChanged: (value){
+                    //         _zone=value;
+                    //       },
+                    //       items: provider.zoneList.map((zones) =>
+                    //           DropdownMenuItem(
+                    //             child: Text(zones),
+                    //             value: zones,
+                    //           )
+                    //       ).toList(),
+                    //     )
+                    // ),
+                    Text('Zone 10 :'!,textAlign: TextAlign.right,style: TextStyle(fontWeight: FontWeight.bold),),
                   ],
                 ),),
                 SizedBox(width: 15,),
@@ -205,18 +208,34 @@ class _UpdateContactState extends State<UpdateContact> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child:DropdownButtonFormField(
+                      //       hint: Text('Select Zones'),
+                      //       value: _zone,
+                      //       onChanged: (value){
+                      //         _zone=value;
+                      //       },
+                      //       items: provider.zoneList.map((zones) =>
+                      //           DropdownMenuItem(
+                      //             child: Text(zones),
+                      //             value: zones,
+                      //           )
+                      //       ).toList(),
+                      //     )
+                      // ),
                       Padding(
                           padding: const EdgeInsets.all(8.0),
                           child:DropdownButtonFormField(
-                            hint: Text('Select Zones'),
-                            value: _zone,
+                            hint: Text('Select Circle',textAlign: TextAlign.center),
+                            value: _circle,
                             onChanged: (value){
-                              _zone=value;
+                              _circle=value;
                             },
-                            items: provider.zoneList.map((zones) =>
+                            items: provider.circleList.map((circle) =>
                                 DropdownMenuItem(
-                                  child: Text(zones),
-                                  value: zones,
+                                  child: Text(circle,textAlign: TextAlign.center),
+                                  value: circle,
                                 )
                             ).toList(),
                           )
@@ -239,6 +258,7 @@ class _UpdateContactState extends State<UpdateContact> {
                 ],
               ),
             ), //date of birth
+
 
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -310,21 +330,24 @@ class _UpdateContactState extends State<UpdateContact> {
           circle: _circle,
           image: _imageUrl
       );
-
-      // context
-      //     .read<ContactProvider>()
-      //     .updateProfile(contact.id!,contact.toMap())
+      EasyLoading.show();
       DbHelper.updateProfile(contact.id!, contactModel.toMap())
           .then((value) {
+            EasyLoading.dismiss();
         showMsg(context, 'Update Successful');
+        provider.contactList.clear();
+        provider.getAllContacts();
         Navigator.pushReplacementNamed(context, ContactListPage.routeName);
       });
-      // final status = await Provider
-      //     .of<ContactProvider>(context, listen: false)
-      //     .addNewContact(contact);
-      // if(status){
-      //   Navigator.pop(context);
-      // }
+      if(contact.circle!=_circle){
+        final transferLog=TransferLogModel(
+            empId: contact.id!,
+            empName: nameControler.text,
+            transferTo: contact.circle!,
+            transferFrom: _circle!,
+            transferDate: getFormattedDateTime(DateTime.now(),'MMM d, yyyy' ));
+            provider.addTransferInfo(transferLog);
+      }
     }
   }
 

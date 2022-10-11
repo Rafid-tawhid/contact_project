@@ -7,3 +7,13 @@ List<TabItem> tabItems = List.of([
   TabItem(Icons.layers, "Reports", Colors.red),
   TabItem(Icons.notifications, "Notifications", Colors.cyan),
 ]);
+
+class ContactProperty{
+  static const String name='name';
+  static const String designation='designation';
+  static const String address='address';
+  static const String phone='number';
+  static const String email='email';
+}
+
+Color mainColor=Color(0xff2B9F49);
