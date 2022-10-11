@@ -63,6 +63,9 @@ class _ContactListPageState extends State<ContactListPage> {
               icon: Icon(Icons.search)),
           IconButton(
               onPressed: () {
+                setState(() {
+                  selectedIndex=0;
+                });
                 Navigator.pushNamed(context, FilteringPage.routeName)
                     .then((circle) {
                   if(circle != null){
@@ -127,7 +130,6 @@ class _ContactListPageState extends State<ContactListPage> {
                           //         }
                           //     )
                           // );
-
                         },
                       ),
                       tileColor: Colors.white,
