@@ -16,4 +16,8 @@ class ContactProperty{
   static const String email='email';
 }
 
+const List<String> bloodGroup=[
+  'O+','O-','A+','A-','B+','B-','AB+','AB-'
+];
+
 Color mainColor=Color(0xff2B9F49);
